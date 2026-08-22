@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPELL EXCEPTION</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(180deg, #ffe6ef 0%, #ffd6e7 50%, #ffc6df 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Georgia, serif;
+      padding: 20px;
+      color: #c2185b;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #ad1457;
+    }
+
+    .word-display {
+      font-size: 2.3rem;
+      letter-spacing: 12px;
+      margin-bottom: 40px;
+      color: #c2185b;
+      min-height: 50px;
+      font-weight: bold;
+    }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      max-width: 500px;
+      margin-bottom: 20px;
+    }
+
+    .key {
+      background: #ff80ab;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 0;
+      text-align: center;
+      font-size: 1.15rem;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.15s;
+      box-shadow: 0 4px 0 #f06292;
+    }
+
+    .key:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #f06292;
+    }
+
+    .enter {
+      grid-column: span 2;
+      background: #c2185b;
+      box-shadow: 0 4px 0 #880e4f;
+    }
+
+    .enter:active {
+      box-shadow: 0 1px 0 #880e4f;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      color: #ad1457;
+      height: 24px;
+      font-weight: 500;
+    }
+
+    /* Video (hidden at first) */
+    #videoContainer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 100;
+    }
+
+    #videoContainer video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #ff80ab;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 101;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spell "EXCEPTION"</h1>
+
+  <div class="word-display" id="display">_ _ _ _ _ _ _ _ _</div>
+
+  <div class="keyboard" id="keyboard"></div>
+
+  <div class="message" id="message"></div>
+
+  <!-- Video -->
+  <div id="videoContainer">
+    <button class="close-btn" onclick="closeVideo()">Close ♡</button>
+    <video id="vid" controls playsinline>
+      <source src="video.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <script>
+    const target = "EXCEPTION";
+    let current = "";
+
+    const display = document.getElementById("display");
+    const message = document.getElementById("message");
+    const keyboard = document.getElementById("keyboard");
+    const videoContainer = document.getElementById("videoContainer");
+    const vid = document.getElementById("vid");
+
+    // Create keyboard
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    letters.forEach(letter => {
+      const btn = document.createElement("div");
+      btn.className = "key";
+      btn.textContent = letter;
+      btn.onclick = () => press(letter);
+      keyboard.appendChild(btn);
+    });
+
+    // Enter button
+    const enter = document.createElement("div");
+    enter.className = "key enter";
+    enter.textContent = "ENTER";
+    enter.onclick = check;
+    keyboard.appendChild(enter);
+
+    function press(letter) {
+      if (current.length < target.length) {
+        current += letter;
+        updateDisplay();
+      }
+    }
+
+    function updateDisplay() {
+      let shown = "";
+      for (let i = 0; i < target.length; i++) {
+        shown += (current[i] || "_") + " ";
+      }
+      display.textContent = shown.trim();
+    }
+
+    function check() {
+      if (current === target) {
+        message.textContent = "Correct! ♡";
+        videoContainer.style.display = "block";
+        vid.play();
+      } else {
+        message.textContent = "Wrong Please. Try Again ♡";
+        current = "";
+        updateDisplay();
+      }
+    }
+
+    function closeVideo() {
+      vid.pause();
+      videoContainer.style.display = "none";
+      current = "";
+      updateDisplay();
+      message.textContent = "";
+    }
+
+    // Keyboard support
+    document.addEventListener("keydown", (e) => {
+      const key = e.key.toUpperCase();
+      if (key >= "A" && key <= "Z") press(key);
+      if (e.key === "Enter") check();
+      if (e.key === "Backspace") {
+        current = current.slice(0, -1);
+        updateDisplay();
+      }
+    });
+  </script>
+</body>
+</html>
