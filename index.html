@@ -12,53 +12,89 @@
     }
 
     body {
-      background: linear-gradient(180deg, #ffe6ef 0%, #ffd6e7 50%, #ffc6df 100%);
+      background: linear-gradient(160deg, #fff0f5 0%, #ffe4ec 40%, #ffd6e7 100%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-family: Georgia, serif;
+      font-family: 'Georgia', 'Times New Roman', serif;
       padding: 20px;
       color: #c2185b;
+      overflow-x: hidden;
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 30px;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      margin-bottom: 12px;
       text-align: center;
       color: #ad1457;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #e91e63;
+      margin-bottom: 35px;
+      opacity: 0.85;
     }
 
     .word-display {
-      font-size: 2.3rem;
-      letter-spacing: 12px;
+      font-size: clamp(1.8rem, 6vw, 2.8rem);
+      letter-spacing: 10px;
       margin-bottom: 40px;
       color: #c2185b;
-      min-height: 50px;
+      min-height: 55px;
       font-weight: bold;
+      transition: all 0.3s ease;
+      text-shadow: 0 2px 8px rgba(194, 24, 91, 0.15);
+    }
+
+    .word-display.correct {
+      color: #e91e63;
+      transform: scale(1.05);
+      text-shadow: 0 0 20px rgba(233, 30, 99, 0.4);
+    }
+
+    .word-display.wrong {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
     }
 
     .keyboard {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 8px;
-      max-width: 500px;
-      margin-bottom: 20px;
+      gap: 7px;
+      max-width: 520px;
+      width: 100%;
+      margin-bottom: 18px;
     }
 
     .key {
       background: #ff80ab;
       border: none;
-      border-radius: 10px;
-      padding: 14px 0;
+      border-radius: 12px;
+      padding: 13px 0;
       text-align: center;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       color: white;
       cursor: pointer;
       user-select: none;
-      transition: 0.15s;
+      transition: all 0.15s ease;
       box-shadow: 0 4px 0 #f06292;
+      font-family: inherit;
+    }
+
+    .key:hover {
+      background: #ff6b9d;
+      transform: translateY(-2px);
     }
 
     .key:active {
@@ -66,34 +102,55 @@
       box-shadow: 0 1px 0 #f06292;
     }
 
-    .enter {
-      grid-column: span 2;
+    .key.special {
       background: #c2185b;
       box-shadow: 0 4px 0 #880e4f;
+      font-size: 0.95rem;
     }
 
-    .enter:active {
+    .key.special:hover {
+      background: #ad1457;
+    }
+
+    .key.special:active {
       box-shadow: 0 1px 0 #880e4f;
     }
 
-    .message {
-      margin-top: 15px;
-      font-size: 1.1rem;
-      color: #ad1457;
-      height: 24px;
-      font-weight: 500;
+    .enter {
+      grid-column: span 2;
     }
 
-    /* Video (hidden at first) */
+    .backspace {
+      grid-column: span 2;
+    }
+
+    .message {
+      margin-top: 18px;
+      font-size: 1.15rem;
+      color: #ad1457;
+      height: 28px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .message.success {
+      color: #e91e63;
+      font-weight: 600;
+    }
+
+    /* Video Overlay */
     #videoContainer {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
       z-index: 100;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     #videoContainer video {
@@ -109,18 +166,61 @@
       background: #ff80ab;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 30px;
+      padding: 12px 22px;
+      border-radius: 40px;
       font-size: 1rem;
       cursor: pointer;
       z-index: 101;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .close-btn:hover {
+      background: #ff6b9d;
+      transform: scale(1.05);
+    }
+
+    /* Floating hearts */
+    .heart {
+      position: fixed;
+      font-size: 20px;
+      pointer-events: none;
+      animation: floatUp 2.5s ease-out forwards;
+      z-index: 50;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-120px) scale(0.6);
+      }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+      .keyboard {
+        gap: 5px;
+      }
+      .key {
+        padding: 11px 0;
+        font-size: 0.95rem;
+        border-radius: 9px;
+      }
+      .word-display {
+        letter-spacing: 6px;
+      }
     }
   </style>
 </head>
 <body>
 
   <h1>Spell "EXCEPTION"</h1>
+  <p class="subtitle">Type the word correctly ✨</p>
 
   <div class="word-display" id="display">_ _ _ _ _ _ _ _ _</div>
 
@@ -132,7 +232,7 @@
   <div id="videoContainer">
     <button class="close-btn" onclick="closeVideo()">Close ♡</button>
     <video id="vid" controls playsinline>
-      <source src="video.mp4" type="video/mp4">
+      <source src="Video.mp4" type="video/mp4">
     </video>
   </div>
 
@@ -146,19 +246,31 @@
     const videoContainer = document.getElementById("videoContainer");
     const vid = document.getElementById("vid");
 
-    // Create keyboard
+    // Create letter keys
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     letters.forEach(letter => {
-      const btn = document.createElement("div");
+      const btn = document.createElement("button");
       btn.className = "key";
       btn.textContent = letter;
       btn.onclick = () => press(letter);
       keyboard.appendChild(btn);
     });
 
+    // Backspace button
+    const backspace = document.createElement("button");
+    backspace.className = "key special backspace";
+    backspace.textContent = "⌫";
+    backspace.onclick = () => {
+      current = current.slice(0, -1);
+      updateDisplay();
+      message.textContent = "";
+      display.classList.remove("wrong", "correct");
+    };
+    keyboard.appendChild(backspace);
+
     // Enter button
-    const enter = document.createElement("div");
-    enter.className = "key enter";
+    const enter = document.createElement("button");
+    enter.className = "key special enter";
     enter.textContent = "ENTER";
     enter.onclick = check;
     keyboard.appendChild(enter);
@@ -167,6 +279,8 @@
       if (current.length < target.length) {
         current += letter;
         updateDisplay();
+        message.textContent = "";
+        display.classList.remove("wrong", "correct");
       }
     }
 
@@ -181,33 +295,72 @@
     function check() {
       if (current === target) {
         message.textContent = "Correct! ♡";
-        videoContainer.style.display = "block";
-        vid.play();
+        message.classList.add("success");
+        display.classList.add("correct");
+        createHearts();
+        
+        setTimeout(() => {
+          videoContainer.style.display = "block";
+          vid.play().catch(() => {});
+        }, 600);
       } else {
-        message.textContent = "Wrong Please. Try Again ♡";
-        current = "";
-        updateDisplay();
+        message.textContent = "Wrong, try again ♡";
+        message.classList.remove("success");
+        display.classList.add("wrong");
+        
+        setTimeout(() => {
+          current = "";
+          updateDisplay();
+          display.classList.remove("wrong");
+        }, 500);
       }
     }
 
     function closeVideo() {
       vid.pause();
+      vid.currentTime = 0;
       videoContainer.style.display = "none";
       current = "";
       updateDisplay();
       message.textContent = "";
+      message.classList.remove("success");
+      display.classList.remove("correct");
     }
 
-    // Keyboard support
+    function createHearts() {
+      for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+          const heart = document.createElement("div");
+          heart.className = "heart";
+          heart.textContent = "♡";
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.top = (60 + Math.random() * 20) + "vh";
+          heart.style.color = `hsl(${330 + Math.random() * 30}, 80%, 65%)`;
+          heart.style.fontSize = (16 + Math.random() * 18) + "px";
+          document.body.appendChild(heart);
+          
+          setTimeout(() => heart.remove(), 2500);
+        }, i * 80);
+      }
+    }
+
+    // Physical keyboard support
     document.addEventListener("keydown", (e) => {
       const key = e.key.toUpperCase();
-      if (key >= "A" && key <= "Z") press(key);
-      if (e.key === "Enter") check();
+      
+      if (key >= "A" && key <= "Z") {
+        press(key);
+      }
+      if (e.key === "Enter") {
+        check();
+      }
       if (e.key === "Backspace") {
         current = current.slice(0, -1);
         updateDisplay();
+        message.textContent = "";
+        display.classList.remove("wrong", "correct");
       }
     });
   </script>
 </body>
-</html>
+  </html>
